@@ -1,0 +1,38 @@
+/*
+ * Created on Sat Dec 27 2025
+ *
+ * Copyright (c) 2025 Your Company
+ */
+
+/* src/index.css */
+/* Font Digital khusus untuk angka - HARUS DI ATAS */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-digital: 'Orbitron', 'Share Tech Mono', monospace;
+}
+
+@layer base {
+  /* Digital number styling */
+  .font-digital {
+    font-feature-settings: "tnum" 1, "zero" 1, "ss01" 1;
+    font-variant-numeric: tabular-nums;
+    font-family: var(--font-digital);
+  }
+  
+  /* Apply to specific elements */
+  [class*="font-\\[family-name\\:var\\(--font-digital\\)\\]"] {
+    font-feature-settings: "tnum" 1, "zero" 1, "ss01" 1;
+    font-variant-numeric: tabular-nums;
+  }
+  
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
