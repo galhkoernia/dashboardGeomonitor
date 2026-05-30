@@ -1,0 +1,42 @@
+runtime:
+  sample_hz: 1
+  duration_sec: 600
+  seed: 11
+  enable_plot: false
+  mode: "sim"
+
+simulator:
+  tilt_deg_initial: 0.4
+  drift_deg_per_hour: 0.8     # di atas max_slope
+  noise_std_g: 0.0003
+  dropout_prob: 0.0
+
+  anomaly:
+    enabled: false
+
+processing:
+  ema_alpha: 0.25
+  outlier_clip_g: 0.2
+
+trend:
+  window_sec: 360
+  min_points: 60
+  r2_min: 0.7
+  sigma_max: 0.02
+  consistency_n: 3
+  consistency_m: 5
+
+decision:
+  T1_warning_deg: 0.8
+  T2_danger_deg: 1.5
+  max_delta_deg: 0.5
+  max_slope_deg_per_hour: 0.2
+
+output:
+  save_csv: true
+  csv_path: "outputs/runs/warning_trend.csv"
+  print_every_n: 10
+
+ai:
+  enabled: true
+  report_path: "outputs/runs/warning_trend.txt"

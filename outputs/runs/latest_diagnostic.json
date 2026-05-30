@@ -1,0 +1,15 @@
+{
+  "experiment": "realtime_latest",
+  "analysis_level": "MediumRiskPattern",
+  "event_type": "None",
+  "flags": [
+    "Low Trend Quality (analysis)"
+  ],
+  "summary": {
+    "warning_count": 0,
+    "danger_count": 0,
+    "slope_ok_true_ratio": 0.0,
+    "max_abs_delta_deg": 0.0,
+    "max_abs_slope_deg_per_hour": 0.0
+  }
+}

@@ -1,0 +1,47 @@
+runtime:
+  sample_hz: 1
+  duration_sec: 600          # 10 menit penuh
+  seed: 13
+  enable_plot: false
+  mode: "sim"
+
+simulator:
+  tilt_deg_initial: 0.55     # sudah dekat T1 sejak awal
+  drift_deg_per_hour: 0.10   # tren kecil, tidak dominan
+  noise_std_g: 0.0015        # cukup untuk bikin sigma naik
+  dropout_prob: 0.0
+
+  anomaly:
+    enabled: true
+    prob_per_min: 0.30       # sering, tapi tidak setiap saat
+    step_deg: 0.65           # > max_delta (0.5) tapi < T2 langsung
+    recover: true            # INI KUNCI naik–turun
+    recover_tau_sec: 90      # lambat → stress berkepanjangan
+
+processing:
+  ema_alpha: 0.25            # respons sedang (tidak terlalu cepat)
+  outlier_clip_g: 0.2
+
+trend:
+  window_sec: 600
+  min_points: 60
+  r2_min: 0.65
+  sigma_max: 0.06
+  consistency_n: 3
+  consistency_m: 5
+
+decision:
+  T1_warning_deg: 0.8
+  T2_danger_deg: 1.5
+  max_delta_deg: 0.5
+  max_slope_deg_per_hour: 0.2
+
+output:
+  save_csv: true
+  csv_path: "outputs/runs/anomaly_stress.csv"
+  print_every_n: 2
+
+ai:
+  enabled: true
+  report_path: "outputs/runs/anomaly_stress.txt"
+
