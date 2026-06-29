@@ -4,11 +4,10 @@
  * Copyright (c) 2025 Your Company
  */
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSnapshot } from "../state/useSnapshot.js";
 import { stopSimulation } from "../services/simulatedDataService.js";
-import Sidebar from "../components/layout/Sidebar.jsx";
-import MainHeader from "../components/layout/MainHeader.jsx";
+import AppLayout from "../components/layout/AppLayout.jsx";
 import PrimaryTiltDisplay from "../components/decision/PrimaryTiltDisplay.jsx";
 import StabilityMetrics from "../components/stability/StabilityMetrics.jsx";
 import EvidencePanel from "../components/evidence/EvidencePanel.jsx";
@@ -44,27 +43,11 @@ const Dashboard = () => {
   const handleNotifications = () => console.log("Notifications clicked");
   const handleProfile = () => console.log("Profile clicked");
 
-  const initialIsMobile = window.innerWidth < 768;
-
-  const [isMobile, setIsMobile] = useState(initialIsMobile);
-  const [sidebarVisible, setSidebarVisible] = useState(initialIsMobile);
-
-  const checkMobile = useCallback(() => {
-    const mobile = window.innerWidth < 768;
-    setIsMobile(mobile);
-    setSidebarVisible(!mobile);
-  }, []);
-
   useEffect(() => {
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, [checkMobile]);
+    setDataSourceMode("live");
 
-  useEffect(() => {
-  setDataSourceMode("live");
+    console.log("[UI] Connecting WS:", WS_URL);
 
-
-  console.log("[UI] Connecting WS:", WS_URL);
 
   connectWebSocket(WS_URL);
 
@@ -86,10 +69,6 @@ const Dashboard = () => {
     return () => stopSimulation();
   }, []);
 
-  const toggleSidebar = () => setSidebarVisible((prev) => !prev);
-  const closeSidebar = () => isMobile && setSidebarVisible(false);
-
-
   useEffect(() => {
     if (!currentSnapshot) return;
 
@@ -110,31 +89,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  const HEADER_CONFIG = {
-    dashboard: {
-      title: "Dashboard",
-      subtiltle:
-        "Pemantauan dan evaluasi geometrik kemiringan serta stabilitas struktur",
-    },
-
-    history: {
-      title: "History",
-      subtiltle: "Data historis kemiringan dan peristiwa",
-    },
-
-    diagnostic: {
-      title: "System Diagnostic",
-      subtiltle: "Analisis dan diagnostik sistem",
-    },
-
-    system: {
-      title: "System",
-      subtiltle: "Informasi konfigurasi dan status sistem",
-    },
-  };
-
-  const header = HEADER_CONFIG[activeView] ?? HEADER_CONFIG.dashboard;
 
   function pickTiltValue(s) {
     if (!s) return null;
@@ -162,39 +116,24 @@ const Dashboard = () => {
     };
   }
 
-  function pickStatus(s) {
-    const d = pickDecision(s);
-    return d?.status || "NORMAL";
-  }
-
-
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
-      <div className="flex">
-        <Sidebar
-          activeView={activeView}
-          onSelectView={setActiveView}
-          isMobile={isMobile}
-          isVisible={sidebarVisible}
-          onClose={closeSidebar}
+    <AppLayout
+      activeView={activeView}
+      onSelectView={setActiveView}
+      onSearchClick={handleSearch}
+      onNotificationsClick={handleNotifications}
+      onProfileClick={handleProfile}
+      footer={
+        <SystemFooter
+          isDemoMode={isDemoMode}
+          dataSource={isDemoMode ? "Simulated Sensors" : "Live Sensors"}
         />
-
-        <div className={`flex-1 ${!isMobile ? "ml-64" : ""}`}>
-          <MainHeader
-            title={header.title}
-            subtitle={header.subtiltle}
-            onMenuToggle={toggleSidebar}
-            isSidebarVisible={sidebarVisible}
-            status={pickStatus(currentSnapshot)}
-            dataRate="1Hz"
-            onSearchClick={handleSearch}
-            onNotificationsClick={handleNotifications}
-            onProfileClick={handleProfile}
-          />
-
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      }
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
             {activeView === "dashboard" && (
+
               <>
                 <div className="mb-8">
                   <PrimaryTiltDisplay
@@ -247,14 +186,8 @@ const Dashboard = () => {
               </div>
             )}
 
-            <SystemFooter
-              isDemoMode={isDemoMode}
-              dataSource={isDemoMode ? "Simulated Sensors" : "Live Sensors"}
-            />
           </div>
-        </div>
-      </div>
-    </div>
+    </AppLayout>
   );
 };
 

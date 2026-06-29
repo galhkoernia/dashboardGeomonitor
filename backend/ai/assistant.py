@@ -15,7 +15,9 @@ from ai.schemas import AIConfig, AIReport, AnalysisResult
 
 class AIAssistant:
     """
-    Artificial Intelligence Assistant untuk menganalisis hasil eksperimen simulasi dan memberikan interpretasi serta rekomendasi berbasis data:
+    Artificial Intelligence Assistant untuk menganalisis 
+    hasil eksperimen simulasi dan memberikan 
+    interpretasi serta rekomendasi berbasis data:
     - Tidak mengubah RuleEngine
     - Tidak mempengaruhi status runtime
     - AI hanya membuat ringkasan laporan berdasarkan data dengan basis CSV + metrik
