@@ -1,11 +1,8 @@
-# ====================================================
-# File      : rule_engine.py
-# Project   : GeoMonitor
-# Author    : Galuh Kurnia
-# Created   : 2026-02-26
-# License   : MIT
-# © 2026 galhkoernia
-# ====================================================
+#
+# Created on Mon Jun 29 2026
+#
+# Copyright (c) 2026 Your Company
+#
 
 from __future__ import annotations
 from dataclasses import dataclass
@@ -44,9 +41,6 @@ class RuleEngine:
         """
         c = self.cfg
 
-        # -----------------
-        # DANGER
-        # -----------------
         danger_reasons: list[str] = []
         danger_codes: list[str] = []
 
@@ -76,9 +70,6 @@ class RuleEngine:
                 reason_codes=tuple(danger_codes),
             )
 
-        # -----------------
-        # WARNING 
-        # -----------------
         warning_reasons: list[str] = []
         warning_codes: list[str] = []
 
@@ -108,9 +99,6 @@ class RuleEngine:
                 reason_codes=tuple(warning_codes),
             )
 
-        # -----------------
-        # NORMAL
-        # -----------------
         return Decision(
             status="NORMAL",
             reason="Tilt and Slope Within Safe Range",

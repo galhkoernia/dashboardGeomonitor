@@ -1,13 +1,8 @@
-# ====================================================
-# File      : schemas.py
-# Project   : GeoMonitor
-# Author    : Galuh Kurnia
-# Created   : 2026-02-26
-# License   : MIT
-# © 2026 galhkoernia
-# ====================================================
-
-
+#
+# Created on Mon Jun 29 2026
+#
+# Copyright (c) 2026 Your Company
+#
 
 from __future__ import annotations
 
@@ -17,7 +12,7 @@ from typing import List, Optional
 @dataclass(frozen=True)
 class AIConfig:
     enabled: bool = False
-    provider: str = "none"      # "none" untuk default; setelah tersambung: "openai"
+    provider: str = "none"  
     model: str = "gpt-4.1-mii"
     report_path: str = "outputs/runs/latest_report.txt"
 

@@ -20,11 +20,9 @@ class SensorSample:
 
     t_sec: float
 
-    # Accelerometer in g-units
     ax_g: float
     ay_g: float
     az_g: float
 
-    # Optional fields (for simulator only)
     true_tilt_deg: float = 0.0
     anomaly_active: bool = False

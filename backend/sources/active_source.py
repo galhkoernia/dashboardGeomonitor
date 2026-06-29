@@ -32,6 +32,5 @@ class ActiveSensorSource(SensorSource):
         if s2 is not None:
             self.last_source = "SIM"
             return s2
-
-        # (FUTURE CHANGE): bisa set last_source="NONE" kalau mau debugging
+        
         return None

@@ -1,11 +1,8 @@
-# ====================================================
-# File      : metrics.py
-# Project   : GeoMonitor
-# Author    : Galuh Kurnia
-# Created   : 2026-02-26
-# License   : MIT
-# © 2026 galhkoernia
-# ====================================================
+#
+# Created on Mon Jun 29 2026
+#
+# Copyright (c) 2026 Your Company
+#
 
 from __future__ import annotations
 
@@ -76,11 +73,9 @@ def summarize_run(csv_path: str) -> RunSummary:
 
     n = len(rows)
 
-    # time
     t_last = _safe_int(rows[-1].get("t_sec", "0"))
     duration = t_last
 
-    # RMSE between tilt_filt_deg and true_tilt_deg (if present)
     se_sum = 0.0
     se_n = 0
 

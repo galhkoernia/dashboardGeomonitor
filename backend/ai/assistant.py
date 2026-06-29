@@ -1,12 +1,8 @@
-# ====================================================
-# File      : assistant.py
-# Project   : GeoMonitor
-# Author    : Galuh Kurnia
-# Created   : 2026-02-26
-# License   : MIT
-# © 2026 galhkoernia
-# ====================================================
-
+#
+# Created on Mon Jun 29 2026
+#
+# Copyright (c) 2026 Your Company
+#
 
 from __future__ import annotations
 
@@ -102,7 +98,7 @@ class AIAssistant:
 
         interpretation_lines = ["Interpreation (deterministic)"]
 
-        # 1. Global system state
+        # Global system state
         if summary.danger_count > 0:
             interpretation_lines.append(
                 "- Sistem sempat memasuki kondisi BAHAYA selama eksperimen."
@@ -116,7 +112,7 @@ class AIAssistant:
                 "- Sistem tetap berada pada kondisi NORMAL sepanjang eksperimen."
             )
 
-        # 2. Dominant decision pathway
+        # Dominant decision pathway
         if summary.slope_ok_true_ratio == 0.0:
             interpretation_lines.append(
                 "- Keputusan keselamatan didominasi oleh perubahan cepat (delta) "
@@ -128,7 +124,7 @@ class AIAssistant:
                 "yang tervalidasi."
             )
 
-        # 3. Trend analysis explanation
+        # Trend analysis explanation
         if summary.slope_ok_true_ratio == 0.0:
             interpretation_lines.extend(
                 [
@@ -139,7 +135,7 @@ class AIAssistant:
                 ]
             )
 
-        # 4. Scenario consistency
+        # Scenario consistency
         if summary.slope_ok_true_ratio > 0.0 and summary.max_abs_delta_deg < 0.2:
             interpretation_lines.append(
                 "- Pola respons sistem konsisten dengan settlement progresif yang berkelanjutan."
@@ -156,7 +152,6 @@ class AIAssistant:
 
         recommendations: List[str] = []
 
-        # Hard recommendation: drift terlihat tapi tidak ada warning
         if summary.max_abs_slope_deg_per_hour >= 0.2 and summary.warning_count == 0:
             recommendations.extend(
                 [
