@@ -21,7 +21,7 @@ const EvidencePanel = ({ tiltData, slopeData, currentSnapshot }) => {
   
   return (
     <div className="space-y-8">
-      {/* Header */}
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-navy-800">Monitoring</h2>
@@ -32,9 +32,8 @@ const EvidencePanel = ({ tiltData, slopeData, currentSnapshot }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Tilt Chart */}
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          {/* Header */}
+
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="font-semibold text-gray-900">
@@ -52,12 +51,10 @@ const EvidencePanel = ({ tiltData, slopeData, currentSnapshot }) => {
             </div>
           </div>
 
-          {/* Chart */}
           <div className="h-64">
             <TiltChart data={tiltData} minimalMode={true} />
           </div>
 
-          {/* Legend */}
           <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-6 text-xs text-gray-600">
             <div className="flex items-center gap-2">
               <div className="w-4 h-0.5 bg-navy-600"></div>
@@ -70,9 +67,7 @@ const EvidencePanel = ({ tiltData, slopeData, currentSnapshot }) => {
           </div>
         </div>
 
-        {/* Slope Chart */}
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          {/* Header */}
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="font-semibold text-gray-900">
@@ -91,12 +86,10 @@ const EvidencePanel = ({ tiltData, slopeData, currentSnapshot }) => {
             </div>
           </div>
 
-          {/* Chart */}
           <div className="h-64">
             <SlopeChart data={slopeData} minimalMode={true} />
           </div>
 
-          {/* Legend */}
           <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-6 text-xs text-gray-600">
             <div className="flex items-center gap-2">
               <div className="w-4 h-0.5 bg-gray-800"></div>
@@ -118,7 +111,6 @@ const EvidencePanel = ({ tiltData, slopeData, currentSnapshot }) => {
         </div>
       </div>
 
-      {/* Information */}
       <div className="bg-gradient-to-r from-navy-50 to-white border border-navy-100 rounded-lg p-4">
         <div className="flex items-start">
           <div className="flex-shrink-0 mt-0.5">

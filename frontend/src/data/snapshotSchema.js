@@ -1,13 +1,8 @@
-/**
- * File      : snapshotSchema.js
- * Project   : GeoMonitor
- * Author    : Galuh Kurnia
- * Created   : 2026-02-26
- * License   : MIT
- * © 2026 galhkoernia
+/*
+ * Created on Mon Jun 29 2026
+ *
+ * Copyright (c) 2026 Your Company
  */
-
-
 
 export function getSoilMoisture(snapshot) {
   if (!snapshot) return null;
@@ -29,10 +24,7 @@ export const STATUS_VALUES = {
   DANGER: 'DANGER',
 };
 
-/**
- * Legacy / compatibility fields (used by snapshotSource + mocks)
- * Keep this export name to avoid breaking existing imports.
- */
+
 export const SNAPSHOT_FIELDS = [
   't_sec',
   'tilt_est_deg',
@@ -48,9 +40,6 @@ export const SNAPSHOT_FIELDS = [
   'anomaly_active',
 ];
 
-/**
- * Optional: legacy list without status/reason, if you need it later
- */
 export const LEGACY_SNAPSHOT_FIELDS = [
   't_sec',
   'tilt_est_deg',

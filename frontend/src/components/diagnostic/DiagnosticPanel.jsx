@@ -21,7 +21,6 @@ export default function DiagnosticPanel() {
                 </p>
             </div>
 
-            {/* Body */}
             <div className="p-6 text-sm">
                 {error && (
                     <p className="text-gray-600">
@@ -55,7 +54,6 @@ function DiagnosticContent({ data }) {
     return (
         <div className="space-y-8 text-gray-800">
 
-            {/* METADATA */}
             <section>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                     Konteks Analisis
@@ -73,7 +71,6 @@ function DiagnosticContent({ data }) {
 
             <Divider />
 
-            {/* METRICS */}
             <section>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
                     Ringkasan Kondisi
@@ -103,7 +100,6 @@ function DiagnosticContent({ data }) {
 
             <Divider />
 
-            {/* FLAGS */}
             <section>
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                     Indikator Sistem
@@ -131,7 +127,6 @@ function DiagnosticContent({ data }) {
     );
 }
 
-/* ---- Small UI atoms ----- */
 
 function Meta({ label, value }) {
     return (

@@ -9,7 +9,6 @@ import React from "react";
 const HistoryPanel = () => {
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900">
           Riwayat Data Sistem
@@ -19,7 +18,6 @@ const HistoryPanel = () => {
         </p>
       </div>
 
-      {/* Placeholder Table */}
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm font-medium text-gray-700">
@@ -33,7 +31,6 @@ const HistoryPanel = () => {
         </div>
       </div>
 
-      {/* Notice */}
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
         <p className="text-xs text-amber-800">
           Catatan: Tampilan ini bersifat informatif dan tidak digunakan sebagai
@@ -41,7 +38,6 @@ const HistoryPanel = () => {
         </p>
       </div>
 
-      {/* Development Notice */}
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
         <p className="text-xs text-blue-800">
           Halaman ini masih dalam tahap pengembangan dan akan diperluas dengan

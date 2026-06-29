@@ -40,8 +40,6 @@ const Dashboard = () => {
 
   const currentSnapshot = isDemoMode ? demoSnapshot : liveSnapshot;
 
-  /* ------------------ UI HANDLERS ------------------- */
-
   const handleSearch = () => console.log("Search clicked");
   const handleNotifications = () => console.log("Notifications clicked");
   const handleProfile = () => console.log("Profile clicked");
@@ -62,29 +60,23 @@ const Dashboard = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, [checkMobile]);
 
-  /* --------------------- LIVE MODE: CONNECT WS ONCE --------------------- */
   useEffect(() => {
   setDataSourceMode("live");
 
 
   console.log("[UI] Connecting WS:", WS_URL);
 
-  // WAJIB: buka koneksi WebSocket
   connectWebSocket(WS_URL);
 
-  // subscribe snapshot realtime
   const unsubscribe = subscribeToSnapshot((snap) => {
     console.log("[UI] Snapshot received:", snap);
 
-    // update snapshot global source
     setLatestSnapshot(snap);
   });
 
   return () => unsubscribe();
 }, []);
 
-
-  /* ------------------ DEMO MODE (UNCHANGED) ------------------ */
 
   useEffect(() => {
     const handleSimulationUpdate = (newSnapshot) => {
@@ -97,7 +89,6 @@ const Dashboard = () => {
   const toggleSidebar = () => setSidebarVisible((prev) => !prev);
   const closeSidebar = () => isMobile && setSidebarVisible(false);
 
-  /* ------------------ HISTORY BUFFER (NEW, MINIMAL) ------------------ */
 
   useEffect(() => {
     if (!currentSnapshot) return;
@@ -109,7 +100,6 @@ const Dashboard = () => {
     setHistory([...historyRef.current]);
   }, [currentSnapshot]);
 
-  /* ------------------ LOADING GUARD (UNCHANGED) ------------------ */
 
   if (!currentSnapshot) {
     return (
@@ -121,7 +111,6 @@ const Dashboard = () => {
     );
   }
 
-  /* ------------------ TITLE & SUBTITLE ------------------- */
   const HEADER_CONFIG = {
     dashboard: {
       title: "Dashboard",
@@ -178,7 +167,6 @@ const Dashboard = () => {
     return d?.status || "NORMAL";
   }
 
-  /* ------------------ RENDER ------------------ */
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
@@ -205,10 +193,9 @@ const Dashboard = () => {
           />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {/* Toggle */}
+
             {activeView === "dashboard" && (
               <>
-                {/* Decision Layer */}
                 <div className="mb-8">
                   <PrimaryTiltDisplay
                     tiltValue={pickTiltValue(currentSnapshot)}
@@ -217,7 +204,6 @@ const Dashboard = () => {
                   />
                 </div>
 
-                {/* Stability Layer */}
                 <div className="mb-8">
                   <h2 className="text-lg font-semibold text-gray-900">
                     Indikator Utama
@@ -225,7 +211,6 @@ const Dashboard = () => {
                   <StabilityMetrics snapshot={currentSnapshot} />
                 </div>
 
-                {/* Evidence Layer  */}
                 <div className="mb-8">
                   <EvidencePanel
                     tiltData={history}
@@ -236,21 +221,18 @@ const Dashboard = () => {
               </>
             )}
 
-            {/* History */}
             {activeView === "history" && (
               <div className="mb-8">
                 <HistoryPanel />
               </div>
             )}
-
-            {/* Diagnostic */}
+            
             {activeView === "diagnostic" && (
               <div className="mb-8">
                 <DiagnosticPanel />
               </div>
             )}
 
-            {/* System */}
             {activeView === "system" && (
               <div className="mb-8">
                 <SystemInfoPanel />

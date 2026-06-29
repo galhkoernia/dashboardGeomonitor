@@ -108,7 +108,7 @@ const PrimaryTiltDisplay = ({
     <div
       className={`w-full rounded-xl border ${config.border} ${config.glow} shadow-xl overflow-hidden ${config.bg} backdrop-blur-sm`}
     >
-      {/* Header */}
+
       <div className="px-6 pt-5 pb-4 border-b border-gray-200/50 bg-gradient-to-r from-white to-white/95">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -146,7 +146,7 @@ const PrimaryTiltDisplay = ({
                   className={`w-3 h-3 rounded-full ${config.indicator}`}
                 ></div>
               </div>
-              {/* Display authoritative status */}
+              
               <span className="text-sm font-semibold tracking-wide">
                 {statusValue}
               </span>
@@ -155,9 +155,9 @@ const PrimaryTiltDisplay = ({
         </div>
       </div>
 
-      {/* Main Digital Numbers */}
       <div className="px-6 py-8 bg-gradient-to-b from-white to-gray-50/30">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
           {/* Display */}
           <div className="lg:col-span-2 min-w-0">
             <div className="mb-4">
@@ -189,7 +189,6 @@ const PrimaryTiltDisplay = ({
               </span>
             </div>
 
-            {/* Measurement Scale */}
             <div className="mt-6 max-w-md">
               <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
                 <span>Min</span>
@@ -204,7 +203,6 @@ const PrimaryTiltDisplay = ({
             </div>
           </div>
 
-          {/* Status Panel Soil Moisture and Rainfall */}
           <div className="w-full h-full">
             <div
               className={`rounded-xl border ${config.border} p-5 ${config.bg} shadow-sm h-full flex flex-col`}
@@ -238,7 +236,6 @@ const PrimaryTiltDisplay = ({
                 </p>
               </div>
 
-              {/* Moisture Percentage Display */}
               <div className="mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">Soil Moisture</span>
@@ -250,7 +247,6 @@ const PrimaryTiltDisplay = ({
                 </div>
               </div>
 
-              {/* Rainfall Rate */}
               <div className="mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">Rainfall</span>
@@ -260,7 +256,6 @@ const PrimaryTiltDisplay = ({
                 </div>
               </div>
 
-              {/* Rain Status */}
               <div className="mb-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">Rain Status</span>
@@ -270,7 +265,6 @@ const PrimaryTiltDisplay = ({
                 </div>
               </div>
 
-              {/* Dryness Indicator */}
               <div className="mt-5 pt-5 border-t border-gray-100">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-gray-700">
@@ -297,7 +291,6 @@ const PrimaryTiltDisplay = ({
         </div>
       </div>
 
-      {/* Footer */}
       <div className="px-6 py-4 bg-gradient-to-r from-navy-50/30 to-white/30 border-t border-gray-200/50">
         <div className="flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">

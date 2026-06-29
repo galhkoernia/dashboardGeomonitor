@@ -103,7 +103,6 @@ const Sidebar = ({
           }}
         />
 
-        {/* Brand Area */}
         <div className="p-5 border-b border-gray-800 bg-gray-900">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -129,7 +128,6 @@ const Sidebar = ({
           </div>
         </div>
 
-        {/* System Context */}
         <div className="px-5 py-3">
           <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
             System Context

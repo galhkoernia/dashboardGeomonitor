@@ -1,14 +1,7 @@
-/**
- * File      : wsClient.js
- * Project   : GeoMonitor
- * Author    : Galuh Kurnia
- * Created   : 2026-02-26
- * License   : MIT
- * © 2026 galhkoernia
- */
-
 /*
- * WebSocket client for TFMS live data
+ * Created on Mon Jun 29 2026
+ *
+ * Copyright (c) 2026 Your Company
  */
 
 export const WS_URL = import.meta.env.VITE_WS_URL ?? 'ws://localhost:8000/ws';
@@ -31,7 +24,6 @@ export const connectWebSocket = (url = WS_URL) => {
   ws.onopen = () => {
     console.log("WebSocket connected to TFMS backend");
 
-    // Stop reconnect loop
     if (reconnectTimer) {
       clearTimeout(reconnectTimer);
       reconnectTimer = null;
@@ -55,7 +47,6 @@ export const connectWebSocket = (url = WS_URL) => {
     console.log("WebSocket disconnected");
     ws = null;
 
-    // FINAL: auto reconnect
     if (!reconnectTimer && lastUrl) {
       reconnectTimer = setTimeout(() => {
         reconnectTimer = null;

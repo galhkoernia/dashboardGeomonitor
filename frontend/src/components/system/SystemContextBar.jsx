@@ -19,9 +19,8 @@ const SystemContextBar = ({
     <div className="w-full bg-white border-b border-gray-200 px-4 py-3 md:px-6 md:py-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         
-        {/* System Identity */}
         <div className="flex items-center">
-          {/* Logo */}
+
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center mr-3 overflow-hidden">
             {logoIcon ? (
               <img 
@@ -49,7 +48,6 @@ const SystemContextBar = ({
             )}
           </div>
           
-          {/* System Name */}
           <div>
             <h1 className="text-lg md:text-xl font-bold text-gray-900 font-sans tracking-tight">
               {systemName}
@@ -59,11 +57,9 @@ const SystemContextBar = ({
             </p>
           </div>
         </div>
-        
-        {/* System Info */}
+      
         <div className="flex items-center mt-3 md:mt-0 space-x-4">
           
-          {/* Mode Indicator */}
           <div className="flex items-center">
             <div className={`w-2 h-2 rounded-full mr-2 ${
               isLive ? 'bg-green-500 animate-pulse' : 'bg-blue-500'
@@ -73,12 +69,10 @@ const SystemContextBar = ({
             </span>
           </div>
           
-          {/* Vertical Divider */}
           <div className="hidden md:block">
             <div className="h-6 w-px bg-gray-300"></div>
           </div>
           
-          {/* Alert Indicator */}
           {alertCount > 0 && (
             <div className="flex items-center">
               <div className="relative">
@@ -97,7 +91,6 @@ const SystemContextBar = ({
             </div>
           )}
           
-          {/* Last Update Time */}
           <div className="text-right">
             <div className="text-xs text-gray-500 font-sans uppercase tracking-wider">
               Updated

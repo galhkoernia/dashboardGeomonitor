@@ -1,10 +1,7 @@
-/**
- * File      : simulatedDataService.js
- * Project   : GeoMonitor
- * Author    : Galuh Kurnia
- * Created   : 2026-02-26
- * License   : MIT
- * © 2026 galhkoernia
+/*
+ * Created on Mon Jun 29 2026
+ *
+ * Copyright (c) 2026 Your Company
  */
 
 import { WS_URL } from "../transport/wsClient.js";
@@ -13,9 +10,6 @@ let ws = null;
 let isRunning = false;
 let updateCallback = null;
 
-/**
- * Start LIVE stream dari backend (bukan simulator)
- */
 export const startSimulation = (callback) => {
   if (isRunning) return;
 
@@ -35,7 +29,6 @@ export const startSimulation = (callback) => {
     try {
       const snapshot = JSON.parse(event.data);
 
-      // kirim snapshot real ke UI callback
       if (updateCallback) {
         updateCallback({
           ...snapshot,
@@ -57,9 +50,6 @@ export const startSimulation = (callback) => {
   };
 };
 
-/**
- * Stop LIVE stream
- */
 export const stopSimulation = () => {
   if (ws) {
     ws.close();
@@ -70,16 +60,10 @@ export const stopSimulation = () => {
   updateCallback = null;
 };
 
-/**
- * Reset tidak diperlukan lagi karena tidak ada simulator
- */
 export const resetSimulation = () => {
   console.warn("Reset ignored: sensor-only mode (no simulation).");
 };
 
-/**
- * Get state koneksi live stream
- */
 export const getSimulationState = () => {
   return {
     isRunning,

@@ -9,9 +9,6 @@
 
 import { SNAPSHOT_FIELDS } from "./snapshotSchema.js";
 
-/**
- * Default snapshot aman supaya UI tidak crash sebelum data masuk
- */
 const DEFAULT_SNAPSHOT = {
   timestamp: Date.now(),
   tilt_deg: 0,
@@ -25,9 +22,6 @@ const DEFAULT_SNAPSHOT = {
 
 let currentMode = "live";
 
-/**
- * Normalize snapshot agar UI selalu aman
- */
 const normalizeSnapshot = (raw) => {
   const normalized = { ...DEFAULT_SNAPSHOT };
 
@@ -48,27 +42,15 @@ const normalizeSnapshot = (raw) => {
   return normalized;
 };
 
-/**
- * Snapshot terakhir dari sensor
- */
 let latest = normalizeSnapshot(null);
 
-/**
- * Mode selalu live (tidak ada mock lagi)
- */
 export const setDataSourceMode = () => {
   console.warn("Mock mode disabled. Sensor-only backend is active.");
 };
 
-/**
- * Dipanggil oleh WebSocket ketika data sensor masuk
- */
 export const setLatestSnapshot = (snap) => {
   latest = normalizeSnapshot(snap);
 };
 
-/**
- * Getter untuk UI components
- */
 export const getCurrentSnapshot = () => latest;
 export const getCurrentMode = () => currentMode;

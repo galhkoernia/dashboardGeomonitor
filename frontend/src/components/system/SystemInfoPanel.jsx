@@ -1,17 +1,15 @@
 /*
- * SystemInfoPanel
- * ----------------
- * Informasi umum sistem
- * Observer-only
- * Tahap pengembangan
+ * Created on Mon Jun 29 2026
+ *
+ * Copyright (c) 2026 Your Company
  */
+
 
 import React from "react";
 
 const SystemInfoPanel = () => {
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900">
           Informasi Sistem
@@ -21,20 +19,18 @@ const SystemInfoPanel = () => {
         </p>
       </div>
 
-      {/* System Identity */}
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <h3 className="text-sm font-semibold text-gray-900 mb-3">
           Identitas Sistem
         </h3>
         <ul className="text-sm text-gray-700 space-y-1">
           <li>Nama: Sistem Pemantauan Kemiringan Struktur</li>
-          <li>Mode: Observer-only</li>
+          <li>Mode: Observer only</li>
           <li>Sumber Data: Live Sensors / Simulasi</li>
           <li>Pengambilan Keputusan: Backend Deterministik</li>
         </ul>
       </div>
 
-      {/* Architecture */}
       <div className="rounded-xl border border-gray-200 bg-white p-5">
         <h3 className="text-sm font-semibold text-gray-900 mb-2">
           Arsitektur
@@ -46,7 +42,6 @@ const SystemInfoPanel = () => {
         </p>
       </div>
 
-      {/* Development Notice */}
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
         <p className="text-xs text-blue-800">
           Halaman ini masih dalam tahap pengembangan dan akan

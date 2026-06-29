@@ -50,9 +50,9 @@ const MainHeader = ({
     >
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
-          {/* Menu Toggle & Title */}
+
           <div className="flex items-center space-x-3">
-            {/* Menu Toggle Button */}
+
             {isMobile && (
               <button
                 onClick={onMenuToggle}
@@ -91,7 +91,6 @@ const MainHeader = ({
               </button>
             )}
 
-            {/* Title */}
             <div>
               <h1 className="text-base font-semibold text-gray-900 tracking-tight">
                 {title}
@@ -102,11 +101,9 @@ const MainHeader = ({
             </div>
           </div>
 
-          {/* Status & Action Buttons */}
           <div className="flex items-center space-x-3">
-            {/* Action Buttons */}
+  
             <div className="flex items-center space-x-1">
-              {/* Search */}
               <button
                 onClick={onSearchClick}
                 className="p-1.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition-all duration-200"
@@ -127,7 +124,6 @@ const MainHeader = ({
                 </svg>
               </button>
 
-              {/* Notifications */}
               <button
                 onClick={onNotificationsClick}
                 className="p-1.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition-all duration-200 relative"
@@ -153,7 +149,6 @@ const MainHeader = ({
                 )}
               </button>
 
-              {/* Profile */}
               <button
                 onClick={onProfileClick}
                 className="p-1.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition-all duration-200"
@@ -175,7 +170,6 @@ const MainHeader = ({
         </div>
       </div>
 
-      {/* Subtle bottom */}
       <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
     </header>
   );

@@ -16,8 +16,6 @@ const StabilityMetrics = ({ snapshot }) => {
   const status = snapshot?.decision?.status ?? snapshot?.status ?? "NORMAL";
   const statusKey = STATUS_MAP[status] || "normal";
 
-  /* ----- STATUS STYLE CONFIG ----- */
-
   const statusConfig = {
     normal: {
       bg: "bg-gradient-to-br from-emerald-50/70 to-white",
@@ -39,11 +37,9 @@ const StabilityMetrics = ({ snapshot }) => {
     },
   };
 
-  /* ------ CONFIG MUST EXIST ------ */
 
   const config = statusConfig[statusKey];
 
-  /* ------ METRICS FROM BACKEND ------ */
 
   const sigma =
     snapshot && typeof snapshot.sigma_deg === "number"
@@ -84,7 +80,6 @@ const StabilityMetrics = ({ snapshot }) => {
     },
   ];
 
-  /* ------- RENDER ------- */
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -94,7 +89,7 @@ const StabilityMetrics = ({ snapshot }) => {
           className={`rounded-xl border-2 ${config.border} ${config.bg}
             p-5 backdrop-blur-sm shadow-lg transition-all duration-300`}
         >
-          {/* Header */}
+
           <div className="mb-4 relative">
             <div className="absolute -top-1 -left-1 w-3 h-8 bg-gradient-to-b from-navy-500 to-navy-600 rounded-r-lg"></div>
             <div className="pl-4">
@@ -107,7 +102,6 @@ const StabilityMetrics = ({ snapshot }) => {
             </div>
           </div>
 
-          {/* Value */}
           <div className="mb-5">
             <div className="font-digital text-3xl font-bold text-navy-800 tracking-[0.05em]">
               {typeof metric.value === "number"
@@ -128,7 +122,6 @@ const StabilityMetrics = ({ snapshot }) => {
             </div>
           </div>
 
-          {/* Status */}
           <div className="pt-5 border-t border-navy-100/50">
             <span
               className={`text-xs font-bold uppercase tracking-wide ${config.text}`}

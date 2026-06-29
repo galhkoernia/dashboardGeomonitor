@@ -12,9 +12,6 @@ const SlopeChart = ({ data, minimalMode = false }) => {
   const width = 600;
   const height = 200;
 
-  /* ----------------------------
-   * Normalize backend snapshots
-   * ---------------------------- */
   const processedData = useMemo(() => {
     let valid = [];
 
@@ -30,9 +27,6 @@ const SlopeChart = ({ data, minimalMode = false }) => {
     return valid;
   }, [data]);
 
-  /* ----------------------------
-   * Draw chart
-   * ---------------------------- */
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || processedData.length < 2) return;
@@ -44,11 +38,9 @@ const SlopeChart = ({ data, minimalMode = false }) => {
     const warning = 0.3;
     const danger = 0.5;
 
-    /* Background safe zone */
     ctx.fillStyle = "rgba(16,185,129,0.06)";
     ctx.fillRect(0, zeroLine - height * 0.12, width, height * 0.24);
 
-    /* Zero line */
     ctx.strokeStyle = minimalMode
       ? "rgba(156,163,175,0.2)"
       : "rgba(156,163,175,0.3)";
@@ -58,7 +50,6 @@ const SlopeChart = ({ data, minimalMode = false }) => {
     ctx.lineTo(width, zeroLine);
     ctx.stroke();
 
-    /* Scale */
     const values = processedData.map((d) => d.slope);
     const minVal = Math.min(...values, -danger);
     const maxVal = Math.max(...values, danger);
@@ -70,7 +61,6 @@ const SlopeChart = ({ data, minimalMode = false }) => {
     const yScale = (height * 0.6) / range;
     const yOffset = (height - range * yScale) / 2;
 
-    /* Line */
     ctx.beginPath();
     ctx.strokeStyle = minimalMode ? "#1e40af" : "#1e3a8a";
     ctx.lineWidth = minimalMode ? 2 : 2.5;
@@ -85,7 +75,6 @@ const SlopeChart = ({ data, minimalMode = false }) => {
 
     ctx.stroke();
 
-    /* Marker */
     const last = processedData[processedData.length - 1];
     const x = (processedData.length - 1) * xScale;
     const y = height - (last.slope - minVal) * yScale - yOffset;

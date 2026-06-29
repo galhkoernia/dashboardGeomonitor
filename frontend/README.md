@@ -1,292 +1,524 @@
-# Structural Tilt Monitoring UI
+# GeoMonitor — Sistem Early Warning Pemantauan Kemiringan Real-Time
 
-## Observer Dashboard (Engineering-Grade, Read-Only)
+![Python](https://img.shields.io/badge/python-3.10+-3670A0?style=flat-square&logo=python&logoColor=ffdd54)
+![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?style=flat-square&logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-UI-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-build-646CFF?style=flat-square&logo=vite&logoColor=white)
+![PyYAML](https://img.shields.io/badge/PyYAML-config-CB171E?style=flat-square&logo=yaml&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
----
+**GeoMonitor** adalah prototipe sistem *early warning* berbasis sensor kemiringan (*tilt monitoring*) yang dirancang untuk mendeteksi secara dini perubahan kemiringan struktur atau tanah sebagai indikasi potensi ketidakstabilan.
 
-## 1. Gambaran Umum
+Sistem ini dibangun sebagai fondasi riset yang **transparan, deterministik, dan dapat diaudit** — bukan sebagai produk akhir siap pakai. Setiap keputusan status keselamatan dapat ditelusuri kembali ke parameter numerik yang menghasilkannya.
 
-Project ini merupakan **antarmuka web (UI)** untuk **pemantauan kemiringan struktur / pondasi** berbasis data snapshot dari backend deterministik.
-
-UI berfungsi sebagai:
-
-* **observer real-time** data kemiringan dan stabilitas,
-* visualisasi **status keselamatan sistem**,
-* media riset, demo, dan observasi teknis,
-* **tanpa pengaruh apa pun terhadap logika keselamatan backend**.
-
-UI **tidak melakukan perhitungan fisik**, **tidak mengambil keputusan**, dan **tidak mengubah data**.
-Seluruh status keselamatan (**NORMAL / WARNING / DANGER**) bersifat **authoritative dari backend**.
+> **Status:** Research Prototype — tidak divalidasi untuk sistem keselamatan produksi.
 
 ---
 
-## 2. Filosofi Desain
+## Daftar Isi
 
-UI dirancang mengikuti prinsip berikut:
-
-1. **Observer-Only Interface**
-
-   * UI hanya membaca snapshot.
-   * Tidak ada kontrol runtime.
-   * Tidak ada feedback ke sistem keselamatan.
-
-2. **Safety-First Visual Hierarchy**
-
-   * Status sistem harus terbaca < 1 detik.
-   * Warna dan struktur visual mendahului angka mentah.
-
-3. **Snapshot-Driven Architecture**
-
-   * Seluruh UI bergantung pada satu struktur snapshot.
-   * Snapshot identik dengan CSV backend dan payload WebSocket.
-
-4. **Engineering-Grade UI**
-
-   * Fokus pada keterbacaan dan konsistensi teknis.
-   * Tanpa gimmick visual atau animasi dekoratif.
-
-5. **Demo-Ready & Integration-Ready**
-
-   * Mendukung mock data dan WebSocket real-time.
-   * Struktur UI tetap sama untuk demo maupun live.
+1. [Arsitektur Sistem](#1-arsitektur-sistem)
+2. [Struktur Proyek](#2-struktur-proyek)
+3. [Pipeline Pemrosesan](#3-pipeline-pemrosesan)
+4. [Mesin Keputusan](#4-mesin-keputusan)
+5. [Prinsip Desain](#5-prinsip-desain)
+6. [Memulai Pengembangan Lokal](#6-memulai-pengembangan-lokal)
+7. [Variabel Environment](#7-variabel-environment)
+8. [Deployment](#8-deployment)
+9. [Ruang Lingkup & Keterbatasan Riset](#9-ruang-lingkup--keterbatasan-riset)
+10. [Pengembang](#10-pengembang)
+11. [Lisensi](#11-lisensi)
 
 ---
 
-## 3. Batasan Sistem (Design Boundary)
+## 1. Arsitektur Sistem
 
-UI **TIDAK BOLEH**:
+### 1.1 Desain Dua Jalur
 
-* menghitung ulang tilt / slope / sigma / delta,
-* menentukan status keselamatan,
-* mengubah threshold atau rule,
-* memodifikasi reason status,
-* mengirim perintah ke backend.
+Sistem GeoMonitor memisahkan tanggung jawab ke dalam dua jalur yang sepenuhnya independen:
 
-UI **HANYA BOLEH**:
+| Jalur | Sifat | Tujuan |
+|---|---|---|
+| **Jalur Operasional** | Safety-Critical, Deterministik, Real-time | Menghasilkan status keselamatan |
+| **Jalur Analisis & Advisory** | Non-Safety, Post-Run | Evaluasi performa & interpretasi |
 
-* menerima snapshot,
-* memetakan snapshot ke visual,
-* menyajikan konteks angka dan grafik.
+Pemisahan ini memastikan bahwa komponen analitik (termasuk AI) **tidak pernah dapat mempengaruhi keputusan keselamatan runtime**.
 
 ---
 
-## 4. Arsitektur Konseptual
+### 1.2 Diagram Alur Sistem
 
 ```
-Backend Deterministik
-(Simulator / Sensor Fisik)
-|
-v
-Snapshot State (JSON)
-|
-v
-WebSocket / Mock Source
-|
-v
-UI Observer (React)
-```
+═══════════════════════════════════════════════════════════════════
+  JALUR OPERASIONAL (REAL-TIME / SAFETY-CRITICAL)
+═══════════════════════════════════════════════════════════════════
 
-Jika UI mati, backend **tetap berjalan normal**.
+  [Sensor Simulator]
+   ax, ay, az (g-units)
+   true_tilt (ground truth)
+   anomaly events
+         |
+         v
+  [Signal Processing]          backend/processing/filters.py
+   Filtering, Clipping,
+   Outlier Rejection,
+   Signal Validation
+         |
+         v
+  [Tilt Estimation]            backend/processing/tilt_estimator.py
+   Roll  = atan2(ay, az)
+   Pitch = atan2(-ax, sqrt(ay²+az²))
+   Magnitude = sqrt(roll²+pitch²)
+         |
+         v
+  [Trend & Stability]          backend/processing/trend.py
+   Slope (deg/hr), R²,
+   Short-term Delta,
+   Noise Level
+         |
+         v
+  [Decision Engine]            backend/decision/rule_engine.py
+   Rule-based, Deterministic
+   NORMAL / WARNING / DANGER
+   + Explicit Justification
+         |
+         v
+  [State Publisher]            backend/io/state_publisher.py
+   Runtime Snapshot
+         |
+         v
+  [WebSocket Server]           backend/server/server.py
+   /ws  →  Frontend
+   /ws/state  →  REST poll
+         |
+         v
+  [React Dashboard]            frontend/
+   Real-time display
+   Decision indicator
+   Tilt chart, History,
+   Evidence, Diagnostics
 
----
+  [CSV Output]
+   Per-run log file
+   outputs/runs/
 
-## 5. Struktur Folder UI (Aktual & Terorganisir)
+═══════════════════════════════════════════════════════════════════
+  JALUR ANALISIS & ADVISORY (POST-RUN / NON-SAFETY)
+═══════════════════════════════════════════════════════════════════
 
-Struktur berikut **sesuai 100% dengan folder yang Anda unggah**:
-
-```
-ui/
-├─ index.html
-├─ package.json
-├─ vite.config.js
-└─ src/
-   ├─ main.jsx                  # Entry point React
-   ├─ App.jsx                   # Root application
-   │
-   ├─ pages/
-   │  └─ Dashboard.jsx          # Halaman utama observer
-   │
-   ├─ components/
-   │  ├─ decision/              # Indikator keputusan (read-only)
-   │  │  ├─ PrimaryTiltDisplay.jsx
-   │  │  └─ index.js
-   │  │
-   │  ├─ evidence/              # Bukti visual pendukung (charts)
-   │  │  ├─ EvidencePanel.jsx
-   │  │  └─ index.js
-   │  │
-   │  ├─ stability/             # Metrik stabilitas
-   │  │  ├─ StabilityMetrics.jsx
-   │  │  └─ index.js
-   │  │
-   │  ├─ system/                # Konteks sistem & status global
-   │  │  ├─ SystemContextBar.jsx
-   │  │  ├─ TiltChart.jsx
-   │  │  └─ SlopeChart.jsx
-   │  │
-   │  └─ layout/                # Tata letak UI
-   │     ├─ MainHeader.jsx
-   │     ├─ Sidebar.jsx
-   │     ├─ SystemFooter.jsx
-   │     └─ index.js
-   │
-   ├─ data/                     # Kontrak data & mock
-   │  ├─ snapshotSchema.js      # Definisi schema snapshot
-   │  ├─ snapshotSource.js      # Switch mock / live
-   │  ├─ mockSnapshots.js       # Data simulasi
-   │  ├─ mockChartData.js
-   │  ├─ diagnosticSchema.js
-   │  ├─ diagnosticSchema.js
-   │  └─ snapshotAccessors.js
-   │
-   ├─ state/
-   │  └─ useSnapshot.js         # State management snapshot
-   │
-   ├─ transport/
-   │  └─ wsClient.js            # WebSocket client
-   │
-   └─ styles/                   # Styling global & token
+  [CSV Output]
+         |
+         v
+  [Analysis Layer]             backend/analysis/metrics.py
+   MAE, RMSE,
+   False Alarm Rate,
+   Detection Delay,
+   Miss Rate
+         |
+         v
+  [AI Advisory]                backend/ai/assistant.py
+   Interpretasi hasil
+   Ringkasan eksperimen
+   Rekomendasi parameter
+         |
+         v
+  [Report / Documentation]
+   Output riset final
 ```
 
 ---
 
-## 6. Peran Modul UI
+### 1.3 Tanggung Jawab Komponen
 
-### 6.1 `decision/`
+| Komponen | Modul | Peran |
+|---|---|---|
+| Sensor Simulator | `backend/app/` | Sumber data mentah (ax, ay, az, true_tilt) |
+| Signal Processing | `backend/processing/filters.py` | Menjaga kualitas sinyal |
+| Tilt Estimation | `backend/processing/tilt_estimator.py` | Transformasi akselerometer → sudut |
+| Moisture Processing | `backend/processing/moisture_processing.py` | Pemrosesan sensor kelembaban tanah |
+| Trend Analysis | `backend/processing/trend.py` | Deteksi pola & stabilitas |
+| Decision Engine | `backend/decision/rule_engine.py` | Keputusan keselamatan (deterministik) |
+| State Publisher | `backend/io/state_publisher.py` | Publikasi snapshot runtime |
+| Queue Publisher | `backend/io/queue_publisher.py` | Antrian data antar komponen |
+| WebSocket Server | `backend/server/server.py` | Jembatan backend ↔ frontend |
+| Analysis Metrics | `backend/analysis/metrics.py` | Evaluasi performa post-run |
+| AI Assistant | `backend/ai/assistant.py` | Interpretasi & rekomendasi (non-safety) |
+| React Dashboard | `frontend/src/` | Visualisasi real-time |
 
-Menampilkan **indikator keputusan utama**:
-
-* nilai tilt utama,
-* status sistem,
-* indikator visual keselamatan.
-
-⚠️ Tidak melakukan logika keputusan.
-
----
-
-### 6.2 `evidence/`
-
-Menyediakan **bukti visual pendukung**:
-
-* grafik tilt vs waktu,
-* grafik laju perubahan (slope).
-
-Digunakan untuk **konteks dan validasi visual**, bukan keputusan.
-
----
-
-### 6.3 `stability/`
-
-Menampilkan **metrik stabilitas sistem**:
-
-* slope,
-* sigma,
-* delta,
-* konsistensi,
-* R².
+**Batasan desain AI Assistant:**
+- Tidak boleh menghasilkan status keselamatan
+- Tidak boleh mengubah parameter runtime
+- Tidak boleh mengontrol Decision Engine
 
 ---
 
-### 6.4 `system/`
+## 2. Struktur Proyek
 
-Menampilkan **konteks global sistem**:
-
-* status keselamatan,
-* grafik inti,
-* informasi runtime.
-
----
-
-### 6.5 `layout/`
-
-Mengatur **kerangka UI**:
-
-* header,
-* sidebar,
-* footer.
-
----
-
-## 7. Struktur Snapshot Data (Kontrak UI ↔ Backend)
-
-UI hanya mengenal **struktur snapshot berikut**:
-
-```json
-{
-  "t_sec": 72,
-  "tilt_est_deg": 0.2563,
-  "tilt_filt_deg": 0.2481,
-  "slope_deg_per_hour": 1.1314,
-  "delta_deg": -0.0216,
-  "r2": 0.0513,
-  "sigma_deg": 0.0289,
-  "consistency": 5,
-  "slope_ok": false,
-  "status": "NORMAL",
-  "reason": "within thresholds",
-  "anomaly_active": false
-}
+```
+geomonitor/
+│
+└── frontend/                         # React Frontend
+    │
+    ├── src/
+    │   ├── main.jsx                  # Entry point React
+    │   ├── App.jsx                   # Root component
+    │   │
+    │   ├── pages/
+    │   │   └── Dashboard.jsx         # Halaman utama dashboard
+    │   │
+    │   ├── components/               # Komponen UI modular
+    │   │   ├── decision/             # Indikator keputusan (NORMAL/WARNING/DANGER)
+    │   │   │   ├── PrimaryTiltDisplay.jsx
+    │   │   │   └── index.js
+    │   │   ├── diagnostic/           # Panel diagnostik sistem
+    │   │   │   └── DiagnosticPanel.jsx
+    │   │   ├── history/              # Riwayat status
+    │   │   │   ├── HistoryPanel.jsx
+    │   │   │   └── index.js
+    │   │   ├── evidence/             # Bukti visual keputusan
+    │   │   │   ├── EvidencePanel.jsx
+    │   │   │   └── index.js
+    │   │   ├── stability/            # Metrik stabilitas sistem
+    │   │   │   ├── StabilityMetrics.jsx
+    │   │   │   └── index.js
+    │   │   ├── system/               # Info & konteks sistem
+    │   │   │   ├── SystemContextBar.jsx
+    │   │   │   └── SystemInfoPanel.jsx
+    │   │   ├── TiltChart.jsx         # Grafik tilt real-time
+    │   │   ├── SlopeChart.jsx        # Grafik slope
+    │   │   └── layout/               # Kerangka tata letak
+    │   │       ├── MainHeader.jsx
+    │   │       ├── Sidebar.jsx
+    │   │       ├── SystemFooter.jsx
+    │   │       └── index.js
+    │   │
+    │   ├── data/                     # Kontrak data & mock
+    │   │   ├── snapshotSchema.js     # Schema snapshot UI ↔ backend
+    │   │   ├── snapshotAccessors.js  # Accessor helper
+    │   │   ├── snapshotSource.js     # Switch mock / live source
+    │   │   ├── mockSnapshots.js      # Data simulasi mock
+    │   │   ├── mockChartData.js      # Data chart mock
+    │   │   ├── diagnosticSchema.js   # Schema diagnostik
+    │   │   └── diagnosticSource.js   # Source diagnostik
+    │   │
+    │   ├── state/                    # State management
+    │   │   ├── useSnapshot.js        # Hook snapshot data
+    │   │   └── useDiagnostic.js      # Hook diagnostik
+    │   │
+    │   ├── transport/                # Transport layer
+    │   │   └── wsClient.js           # WebSocket client
+    │   │
+    │   └── styles/
+    │       └── index.css
+    │
+    ├── index.html
+    ├── package.json
+    ├── vite.config.js
+    ├── vercel.json
+    └── .env.example
 ```
 
-Aturan:
+---
 
-* Struktur **tidak boleh diubah UI**.
-* `status` dan `reason` bersifat **final**.
+## 3. Pipeline Pemrosesan
+
+### Stage 1 — Sensor Simulator
+
+Menghasilkan data sintetis yang merepresentasikan output sensor IMU nyata.
+
+| Parameter | Deskripsi |
+|---|---|
+| `ax, ay, az` | Akselerasi dalam satuan g |
+| `true_tilt` | Ground truth kemiringan (derajat) |
+| `initial_tilt` | Kemiringan awal simulasi |
+| `drift_rate` | Drift linear (deg/jam) |
+| `noise_std` | Standar deviasi noise Gaussian |
+| `anomaly` | Step change opsional dengan/tanpa recovery |
+| `dropout` | Simulasi kehilangan sinyal |
 
 ---
 
-## 8. Mode Operasi UI
+### Stage 2 — Signal Processing
 
-### 8.1 Demo / Mock
+`backend/processing/filters.py`
 
-* Data berasal dari `data/mockSnapshots.js`.
-* Digunakan untuk riset dan presentasi.
-
-### 8.2 Live (WebSocket)
-
-* Data diterima dari backend deterministik.
-* Update ±1 Hz.
-* UI tetap observer-only.
+- Filtering sinyal mentah (low-pass / moving average)
+- Clipping nilai di luar batas fisik yang valid
+- Validasi integritas sinyal (deteksi dropout)
+- Output: sinyal akselerometer yang bersih dan stabil
 
 ---
 
-## 9. Grafik
+### Stage 3 — Tilt Estimation
 
-UI hanya menampilkan **grafik kontekstual**:
+`backend/processing/tilt_estimator.py`
 
-1. Tilt vs Time
-2. Slope Rate vs Time
+Estimasi sudut menggunakan asumsi quasi-static (percepatan dinamis kecil):
 
-Grafik:
+```
+Roll  = atan2(ay, az)
+Pitch = atan2(-ax, sqrt(ay² + az²))
+Tilt Magnitude = sqrt(roll² + pitch²)
+```
 
-* non-interaktif berlebihan,
-* tidak mempengaruhi status.
+Referensi metode: Freescale Application Note AN3461.
+
+> **Catatan:** Metode ini valid selama komponen percepatan dinamis jauh lebih kecil dari gravitasi. Untuk integrasi sensor fisik tahap lanjut, sensor fusion (complementary/Kalman filter) akan dipertimbangkan.
 
 ---
 
-## 10. Menjalankan UI
+### Stage 4 — Trend & Stability Analysis
+
+`backend/processing/trend.py`
+
+| Metrik | Deskripsi |
+|---|---|
+| `slope` | Laju perubahan tilt (deg/jam), estimasi via regresi linear |
+| `r_squared` | Koefisien determinasi — kekuatan tren |
+| `delta` | Perubahan tilt jangka pendek |
+| `noise_level` | Estimasi variance residual sinyal |
+
+---
+
+### Stage 5 — Decision Engine
+
+Lihat [Bagian 4](#4-mesin-keputusan).
+
+---
+
+### Stage 6 — Output Operasional
+
+**CLI Log (real-time):**
+
+```
+[TIMESTAMP] tilt=2.34° slope=0.12 deg/hr delta=0.03° status=NORMAL
+```
+
+**CSV Output** (`outputs/runs/`):
+
+| Kolom | Deskripsi |
+|---|---|
+| `timestamp` | Waktu pengukuran |
+| `tilt_filtered` | Tilt hasil filter |
+| `true_tilt` | Ground truth |
+| `slope` | Laju perubahan |
+| `delta` | Delta jangka pendek |
+| `status` | NORMAL / WARNING / DANGER |
+| `reason` | Alasan keputusan eksplisit |
+
+---
+
+### Stage 7 — Analysis Layer (Post-Run)
+
+`backend/analysis/metrics.py`
+
+| Metrik | Formula |
+|---|---|
+| MAE | mean(|tilt_filtered - true_tilt|) |
+| RMSE | sqrt(mean((tilt_filtered - true_tilt)²)) |
+| False Alarm Rate | FP / (FP + TN) |
+| Miss Rate | FN / (FN + TP) |
+| Detection Delay | t_detected - t_anomaly_start |
+
+---
+
+### Stage 8 — AI Advisory (Post-Run, Non-Safety)
+
+`backend/ai/`
+
+Berjalan setelah eksekusi selesai. Membaca CSV output dan menghasilkan:
+- Ringkasan performa eksperimen
+- Interpretasi pola anomali
+- Rekomendasi parameter untuk eksperimen berikutnya
+
+**AI tidak memiliki akses ke runtime dan tidak dapat mengubah keputusan sistem.**
+
+---
+
+### Stage 9 — WebSocket Server & Frontend
+
+`backend/server/server.py` → `frontend/src/transport/wsClient.js`
+
+- Backend mempublikasikan snapshot runtime ke endpoint `/ws`
+- Frontend subscribe melalui WebSocket (`VITE_WS_URL`)
+- State diakses via `useSnapshot.js` dan `useDiagnostic.js`
+- Komponen UI merender status, chart, evidence, dan history secara real-time
+
+---
+
+## 4. Mesin Keputusan
+
+`backend/decision/rule_engine.py`
+
+Decision Engine bersifat **deterministik dan rule-based**. Tidak menggunakan machine learning atau probabilistik.
+
+### Status Output
+
+| Status | Kondisi |
+|---|---|
+| `NORMAL` | Semua parameter di bawah threshold |
+| `WARNING` | Satu atau lebih parameter mendekati batas kritis |
+| `DANGER` | Parameter melampaui threshold bahaya |
+
+### Prinsip Keputusan
+
+Setiap status yang dihasilkan disertai:
+- Parameter numerik yang memicu keputusan
+- Threshold yang terlampaui
+- Alasan eksplisit yang dapat ditelusuri (audit trail)
+
+Contoh output reason:
+
+```
+"tilt=4.82° exceeds WARNING threshold=4.0°; slope=0.31 deg/hr (rising trend, R²=0.91)"
+```
+
+---
+
+## 5. Prinsip Desain
+
+### 1. Deterministic Core
+Semua keputusan keselamatan berbasis aturan eksplisit. Tidak ada komponen probabilistik atau neural network pada jalur operasional. Setiap output decision engine dapat direproduksi dengan input yang sama.
+
+### 2. Explainability First
+Setiap status peringatan memiliki parameter numerik yang terlampaui, bukti tren yang terdeteksi, dan alasan eksplisit yang dapat ditelusuri. Tidak ada keputusan "black box".
+
+### 3. AI as Advisor, Not Controller
+AI Assistant beroperasi eksklusif pada jalur analisis post-run. Tidak memiliki akses ke runtime, tidak dapat mengubah parameter threshold, dan tidak dapat menghasilkan status keselamatan. AI membantu manusia memahami hasil, bukan menggantikan logika sistem.
+
+### 4. Separation of Concerns
+Jalur operasional dan jalur analisis sepenuhnya terisolasi. Kegagalan atau bug pada analisis layer tidak dapat mempengaruhi keputusan runtime. Backend dan frontend di-deploy dan dikomunikasikan secara independen melalui WebSocket.
+
+### 5. Research-Oriented
+Sistem dirancang untuk eksperimen parameter secara sistematis, evaluasi akurasi dan stabilitas algoritma, pengujian false alarm rate dan detection delay, serta reproduktibilitas eksperimen melalui konfigurasi YAML.
+
+---
+
+## 6. Memulai Pengembangan Lokal
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js 18+
+- pip / pipx
+
+### Backend Setup
 
 ```bash
+cd backend
+pip install -e .
+cp .env.example .env
+uvicorn app.main:app --reload --port 8000
+```
+
+Backend akan berjalan di `http://localhost:8000`.
+WebSocket tersedia di `ws://localhost:8000/ws`.
+
+### Frontend Setup
+
+```bash
+cd frontend
 npm install
+cp .env.example .env
 npm run dev
 ```
 
-Akses:
+Frontend akan berjalan di `http://localhost:5173`.
 
-```
-http://localhost:5173
+### Menjalankan Keduanya Sekaligus
+
+Buka dua terminal terpisah dan jalankan perintah backend dan frontend masing-masing secara bersamaan.
+
+---
+
+## 7. Variabel Environment
+
+### Backend (`backend/.env`)
+
+| Variable | Default | Deskripsi |
+|---|---|---|
+| `PORT` | `8000` | Port server listen |
+| `CORS_ORIGINS` | `*` | Origin frontend yang diizinkan |
+
+### Frontend (`frontend/.env`)
+
+| Variable | Default | Deskripsi |
+|---|---|---|
+| `VITE_WS_URL` | `ws://localhost:8000/ws` | Endpoint WebSocket backend |
+
+---
+
+## 8. Deployment
+
+### Frontend → Vercel
+
+1. Push repository ke GitHub
+2. Import project di [vercel.com](https://vercel.com)
+3. Set **Root Directory** ke `frontend/`
+4. Build settings akan terdeteksi otomatis dari `vercel.json`
+5. Tambahkan environment variable:
+   ```
+   VITE_WS_URL=wss://your-backend.railway.app/ws
+   ```
+6. Deploy
+
+`frontend/vercel.json`:
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite"
+}
 ```
 
 ---
 
-## 11. Catatan Penting
+### Backend → Railway
 
-UI ini:
+1. Push repository ke GitHub
+2. Buat project baru di [railway.app](https://railway.app)
+3. Connect ke repository, set **Root Directory** ke `backend/`
+4. Railway akan mendeteksi `Procfile` secara otomatis
+5. Tambahkan environment variables:
+   ```
+   PORT=8000
+   CORS_ORIGINS=https://your-frontend.vercel.app
+   ```
+6. Deploy
 
-* **bukan dashboard bisnis**,
-* **bukan sistem kontrol**,
-* **bukan decision engine**.
-
-UI adalah **alat observasi teknik**.
+`backend/Procfile`:
+```
+web: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
 
 ---
+
+## 9. Ruang Lingkup & Keterbatasan Riset
+
+| Aspek | Status |
+|---|---|
+| Mode operasi | Simulasi terkontrol (sensor fisik belum terintegrasi) |
+| Asumsi tilt estimation | Quasi-static — tidak valid untuk getaran dinamis tinggi |
+| AI Advisory | Eksperimental, belum divalidasi secara akademik |
+| Validasi produksi | Belum dilakukan — tidak untuk sistem keselamatan nyata |
+| Sensor fisik | MPU6050 dan sensor kelembaban direncanakan untuk tahap berikutnya |
+
+Sistem ini dirancang sebagai **fondasi riset**, bukan solusi siap pakai. Keputusan desain mengutamakan validitas ilmiah, transparansi, dan kemudahan pengembangan jangka panjang.
+
+---
+
+## 10. Pengembang
+
+**Galuh Kurnia Pratama**
+Mahasiswa Fisika — Universitas Negeri Surabaya
+
+| Kontak | |
+|---|---|
+| Email | galuh.23105@mhs.unesa.ac.id |
+| No. HP | +62 812-5985-3104 |
+
+---
+
+## 11. Lisensi
+
+MIT License — © 2026 Galuh Kurnia Pratama

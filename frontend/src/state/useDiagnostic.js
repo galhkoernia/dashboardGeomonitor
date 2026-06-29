@@ -1,24 +1,11 @@
-/**
- * File      : useDiagnostic.js
- * Project   : GeoMonitor
- * Author    : Galuh Kurnia
- * Created   : 2026-02-26
- * License   : MIT
- * © 2026 galhkoernia
+/*
+ * Created on Mon Jun 29 2026
+ *
+ * Copyright (c) 2026 Your Company
  */
 
 import { useEffect, useState } from "react";
 
-/*
-
-    useDiagnostic
-    -------------
-
-    Prinsip desain:
-    - Tidak mempengaruhi runtime / decision
-    - Aman jika tidak tersedia
-    - Read-only
-*/
 export function useDiagnostic() {
     const [diagnostic, setDiagnostic] = useState(null);
     const [error, setError] = useState(null);
