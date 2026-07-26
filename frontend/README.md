@@ -521,4 +521,4 @@ Mahasiswa Fisika — Universitas Negeri Surabaya
 
 ## 11. Lisensi
 
-MIT License — © 2026 Galuh Kurnia Pratama
+© 2026 Galuh Kurnia Pratama
