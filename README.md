@@ -557,14 +557,3 @@ Sistem ini dirancang sebagai **fondasi riset**, bukan solusi siap pakai. Keputus
 
 **Galuh Kurnia Pratama**
 Mahasiswa Fisika — Universitas Negeri Surabaya
-
-| Kontak | |
-|---|---|
-| Email | galuh.23105@mhs.unesa.ac.id |
-| No. HP | +62 812-5985-3104 |
-
----
-
-## 11. Lisensi
-
-© 2026 Galuh Kurnia Pratama
