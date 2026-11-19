@@ -9,6 +9,16 @@
 
 **GeoMonitor** adalah prototipe sistem *early warning* berbasis sensor kemiringan (*tilt monitoring*) yang dirancang untuk mendeteksi secara dini perubahan kemiringan struktur atau tanah sebagai indikasi potensi ketidakstabilan.
 
+## GeoMonitor Dashboard
+
+<p align="center">
+  <img
+    src="./frontend/public/preview.png"
+    alt="Dashboard Geomonitor Preview"
+    width="100%"
+  />
+</p>
+
 Sistem ini dibangun sebagai fondasi riset yang **transparan, deterministik, dan dapat diaudit** — bukan sebagai produk akhir siap pakai. Setiap keputusan status keselamatan dapat ditelusuri kembali ke parameter numerik yang menghasilkannya.
 
 > **Status:** Research Prototype — tidak divalidasi untuk sistem keselamatan produksi.
