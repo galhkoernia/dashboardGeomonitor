@@ -559,7 +559,7 @@ web: uvicorn app.main:app --host 0.0.0.0 --port $PORT
 | Validasi produksi | Belum dilakukan — tidak untuk sistem keselamatan nyata |
 | Sensor fisik | MPU6050 dan sensor kelembaban direncanakan untuk tahap berikutnya |
 
-Sistem ini dirancang sebagai **fondasi riset**, bukan solusi siap pakai. Keputusan desain mengutamakan validitas ilmiah, transparansi, dan kemudahan pengembangan jangka panjang.
+Sistem ini dirancang sebagai **fondasi riset**, bukan solusi siap pakai.
 
 ---
 
