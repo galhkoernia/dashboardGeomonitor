@@ -566,4 +566,11 @@ Sistem ini dirancang sebagai **fondasi riset**, bukan solusi siap pakai.
 ## 10. Pengembang
 
 **Galuh Kurnia Pratama**
-Mahasiswa Fisika — Universitas Negeri Surabaya
+
+Physics Student · Instrumentation · Software Engineering Entusiast
+
+Building practical systems through the integration of **physics, electronics, software, and engineering**.
+
+---
+
+© 2026 Galuh Kurnia Pratama. All rights reserved.
